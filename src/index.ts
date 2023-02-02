@@ -21,7 +21,7 @@ import { DialogBot } from './bots/dialogBot';
 import { MainDialog } from './dialogs/mainDialog';
 
 // Read environment variables from .env file
-const ENV_FILE = path.join(__dirname, '.env');
+const ENV_FILE = path.join(__dirname, '..', '.env');
 config({ path: ENV_FILE });
 
 const botFrameworkAuthentication = new ConfigurationBotFrameworkAuthentication(process.env as ConfigurationBotFrameworkAuthenticationOptions);

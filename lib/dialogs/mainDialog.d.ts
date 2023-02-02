@@ -1,5 +1,5 @@
 import { StatePropertyAccessor, TurnContext } from 'botbuilder';
-import { ComponentDialog, WaterfallStepContext } from 'botbuilder-dialogs';
+import { ComponentDialog } from 'botbuilder-dialogs';
 export declare class MainDialog extends ComponentDialog {
     constructor();
     /**
@@ -15,28 +15,9 @@ export declare class MainDialog extends ComponentDialog {
      *
      * @param {WaterfallStepContext} stepContext
      */
-    choiceCardStep(stepContext: WaterfallStepContext): Promise<import("botbuilder-dialogs").DialogTurnResult<any>>;
     /**
-     * Send a Rich Card response to the user based on their choice.
-     * This method is only called when a valid prompt response is parsed from the user's response to the ChoicePrompt.
-     * @param {WaterfallStepContext} stepContext
+     * name
      */
-    showCardStep(stepContext: any): Promise<any>;
-    /**
-     * Create the choices with synonyms to render for the user during the ChoicePrompt.
-     * (Indexes and upper/lower-case variants do not need to be added as synonyms)
-     */
-    getChoices(): {
-        synonyms: string[];
-        value: string;
-    }[];
-    private createAdaptiveCard;
-    private createAnimationCard;
-    private createAudioCard;
-    private createOAuthCard;
-    private createHeroCard;
-    private createReceiptCard;
-    private createSignInCard;
-    private createThumbnailCard;
-    private createVideoCard;
+    intenteRecognizer(stepContext: any, next: any): Promise<any>;
+    qnaSearch(stepContext: any, next: any): Promise<any>;
 }
