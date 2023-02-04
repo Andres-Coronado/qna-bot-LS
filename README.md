@@ -15,18 +15,6 @@ This bot has been created using [Microsoft Bot Framework][1], it shows how to cr
 
 ## To try this sample
 
-- Clone the repository
-
-    ```bash
-    git clone https://github.com/microsoft/botbuilder-samples.git
-    ```
-
-- In a terminal, navigate to `samples/typescript_nodejs/06.using-cards`
-
-    ```bash
-    cd samples/typescript_nodejs/06.using-cards
-    ```
-
 - Install modules
 
     ```bash
