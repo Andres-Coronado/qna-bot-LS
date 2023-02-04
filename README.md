@@ -2,7 +2,7 @@
 
 Bot Framework v4 using cards bot sample
 
-This bot has been created using [Microsoft Bot Framework][1], it shows how to create a bot that uses rich cards to enhance your bot design.
+This bot has been created using [Microsoft Bot Framework][1], it shows how to use CLI  and QnA from Language Studio From Azure Services
 
 ## Prerequisites
 
