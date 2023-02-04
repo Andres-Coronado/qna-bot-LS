@@ -23,6 +23,7 @@ export class MainDialog extends ComponentDialog {
         this.addDialog(new ChoicePrompt('cardPrompt'));
         this.addDialog(new WaterfallDialog(MAIN_WATERFALL_DIALOG, [
             this.intentRecognizer.bind(this),
+            // this.welcome.bind(this),
             this.qnaSearch.bind(this),
         ]));
 
@@ -56,16 +57,32 @@ export class MainDialog extends ComponentDialog {
     /**
      * name
      */
+
+    //En caso de no contar con CLU puedes usar esta funcion
+    // public async  welcome(step: WaterfallStepContext, next: () => Promise<void>) {
+    //     console.log('MainDialog.welcome');
+        
+    //     const userInput = step.context.activity.text.trim().toLowerCase();
+    //     const WELCOMES = ['hola', 'hi', 'hello', 'eit', 'whats up', 'que onda', 'sup', 'buenos dias', 'buenas', 'ola', 'watzup'];
+    //     if (WELCOMES.indexOf(userInput) !== -1) {
+    //         await step.context.sendActivity('¿En qué puedo ayudarte hoy?');
+    //         return await step.endDialog();
+    //     } else {
+    //         return await step.next();
+    //     }
+    // }
+
+    //----
     public async   intentRecognizer(stepContext,next) {
         console.log('MainDialog.intentRecognizer');
         let input = stepContext.context.activity.text
         const intent:any = await CLU(input)
         console.log(intent);
-        if(intent.topIntent==='Welcome' && intent.intents[0].confidenceScore >= 0.90){
+        if(intent.topIntent==='Welcome' && intent.intents[0].confidenceScore >= 0.9999999){
            await stepContext.context.sendActivity('¿En qué te puedo ayudar? ');
           return await stepContext.endDialog();
         }else {
-          return await stepContext.next();
+          return await next();
       }
         
     }

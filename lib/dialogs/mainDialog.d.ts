@@ -1,5 +1,5 @@
 import { StatePropertyAccessor, TurnContext } from 'botbuilder';
-import { ComponentDialog } from 'botbuilder-dialogs';
+import { ComponentDialog, WaterfallStepContext } from 'botbuilder-dialogs';
 export declare class MainDialog extends ComponentDialog {
     constructor();
     /**
@@ -18,6 +18,6 @@ export declare class MainDialog extends ComponentDialog {
     /**
      * name
      */
-    intentRecognizer(stepContext: any, next: any): Promise<any>;
+    welcome(step: WaterfallStepContext, next: () => Promise<void>): Promise<import("botbuilder-dialogs").DialogTurnResult<any>>;
     qnaSearch(stepContext: any, next: any): Promise<any>;
 }
