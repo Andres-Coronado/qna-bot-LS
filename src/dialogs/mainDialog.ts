@@ -2,8 +2,7 @@
 // Licensed under the MIT License.
 
 import { StatePropertyAccessor, TurnContext, UserState } from 'botbuilder';
-
-import axios from 'axios'
+import {CLU,QnA} from '../helper/languageApi'
 import {
     ChoicePrompt,
     ComponentDialog,
@@ -23,7 +22,7 @@ export class MainDialog extends ComponentDialog {
         // Define the main dialog and its related components.
         this.addDialog(new ChoicePrompt('cardPrompt'));
         this.addDialog(new WaterfallDialog(MAIN_WATERFALL_DIALOG, [
-            this.intenteRecognizer.bind(this),
+            this.intentRecognizer.bind(this),
             this.qnaSearch.bind(this),
         ]));
 
@@ -57,86 +56,28 @@ export class MainDialog extends ComponentDialog {
     /**
      * name
      */
-    public async   intenteRecognizer(stepContext,next) {
+    public async   intentRecognizer(stepContext,next) {
         console.log('MainDialog.intentRecognizer');
-        try {
-            let input = stepContext.context.activity.text
-
-            var data = JSON.stringify({
-                "kind": "Conversation",
-                "analysisInput": {
-                  "conversationItem": {
-                    "id": "1",
-                    "text": input,
-                    "participantId": "1"
-                  }
-                },
-                "parameters": {
-                  "projectName": "CLI-bot",
-                  "verbose": true,
-                  "deploymentName": "CLU",
-                  "stringIndexType": "TextElement_V8"
-                }
-              });
-              
-              var config = {
-                method: 'post',
-                url: `${process.env.LanguageStudioEndpoint}/language/:analyze-conversations?api-version=2022-10-01-preview`,
-                headers: { 
-                  'Ocp-Apim-Subscription-Key': process.env.LanguageStudioAPIKey, 
-                  'Apim-Request-Id': '4ffcac1c-b2fc-48ba-bd6d-b69d9942995a', 
-                  'Content-Type': 'application/json'
-                },
-                data : data
-              };
-              
-              await axios(config)
-              .then(function (response) {
-                console.log(JSON.stringify(response.data.result.prediction));
-                // return response.data.result.prediction
-              })
-              .catch(function (error) {
-                console.log(error);
-              });
-              
-        } catch (error) {
-            console.log(error);
-            
-        }
-
-        return await stepContext.next();
-
+        let input = stepContext.context.activity.text
+        const intent:any = await CLU(input)
+        console.log(intent);
+        if(intent.topIntent==='Welcome' && intent.intents[0].confidenceScore >= 0.90){
+           await stepContext.context.sendActivity('¿En qué te puedo ayudar? ');
+          return await stepContext.endDialog();
+        }else {
+          return await stepContext.next();
+      }
+        
     }
     public async qnaSearch(stepContext,next) {
         console.log('MainDialog.qnaSearch');
+        let input = stepContext.context.activity.text
+        const resQNA = await QnA(input)
+        console.log(resQNA);
+        return  await stepContext.context.sendActivity(resQNA);
+
         
-        try {
-            let input = stepContext.context.activity.text
-            var data = JSON.stringify({'question':input})
-            
-            var config = {
-              method: 'post',
-              url: `${process.env.LanguageStudioEndpoint}/language/:query-knowledgebases?api-version=2021-10-01&deploymentName=qna-chatbot&projectName=qna-chatbot`,
-              headers: { 
-                'Content-Type': 'application/json', 
-                'Ocp-Apim-Subscription-Key': process.env.LanguageStudioAPIKey
-              },
-              data :data
-            };
-            
-            const res =await axios(config)
-            .then( (response)=> {
-                // JSON.stringify(response.data)
-               return  response.data.answers[0]
-    
-            })
-            .catch( (error) => {
-              console.log(error);
-            });
-             return await stepContext.context.sendActivity(res.answer)
-            } catch (error) {
-                console.log(error);
-            }
+
     }
 
 }

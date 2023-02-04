@@ -18,6 +18,6 @@ export declare class MainDialog extends ComponentDialog {
     /**
      * name
      */
-    intenteRecognizer(stepContext: any, next: any): Promise<any>;
+    intentRecognizer(stepContext: any, next: any): Promise<any>;
     qnaSearch(stepContext: any, next: any): Promise<any>;
 }
