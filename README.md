@@ -1,8 +1,8 @@
-# Using-Cards
+#  CLU - Custom question answering
 
 Bot Framework v4 using CLU Service and QnA
 
-This bot has been created using [Microsoft Bot Framework][1], it shows how to use CLI  and QnA from Language Studio From Azure Services
+This bot has been created using [Microsoft Bot Framework][1], it shows how to use CLU  and QnA from Language Studio From Azure Services
 
 ## Prerequisites
 
