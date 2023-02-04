@@ -1,6 +1,6 @@
 # Using-Cards
 
-Bot Framework v4 using cards bot sample
+Bot Framework v4 using CLU Service and QnA
 
 This bot has been created using [Microsoft Bot Framework][1], it shows how to use CLI  and QnA from Language Studio From Azure Services
 
