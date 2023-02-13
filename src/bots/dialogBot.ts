@@ -26,6 +26,16 @@ export class DialogBot extends ActivityHandler {
         this.dialog = dialog;
         this.dialogState = this.conversationState.createProperty('DialogState');
 
+
+        this.onMembersAdded(async (context, next) => {
+            const membersAdded = context.activity.membersAdded;
+            for (const member of membersAdded) {
+                if (member.id !== context.activity.recipient.id) {
+                    await context.sendActivity('Bienvenido a mi bot!');
+                }
+            }
+            await next()
+        })
         this.onMessage(async (context, next) => {
             console.log('Running dialog with Message Activity.');
 

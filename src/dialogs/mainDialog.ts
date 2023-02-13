@@ -2,6 +2,8 @@
 // Licensed under the MIT License.
 
 import { StatePropertyAccessor, TurnContext, UserState } from 'botbuilder';
+const { MessageFactory,CardFactory } = require('botbuilder');
+
 import {CLU,QnA} from '../helper/languageApi'
 import {
     ChoicePrompt,
@@ -78,12 +80,38 @@ export class MainDialog extends ComponentDialog {
         let input = stepContext.context.activity.text
         const intent:any = await CLU(input)
         console.log(intent);
-        if(intent.topIntent==='Welcome' && intent.intents[0].confidenceScore >= 0.9999999){
-           await stepContext.context.sendActivity('¿En qué te puedo ayudar? ');
-          return await stepContext.endDialog();
-        }else {
-          return await next();
+        if( intent.intents[intent.intents.length-1].confidenceScore >= 1){
+            return await stepContext.next()
+        }
+    //     if(intent.topIntent==='Welcome' && intent.intents[0].confidenceScore >= 0.99 ){
+    //        await stepContext.context.sendActivity('¿En qué te puedo ayudar? ');
+    //       return await stepContext.endDialog();
+    //     }
+    //     else if(intent.topIntent==='GoodBye' && intent.intents[0].confidenceScore >= 0.99 ){
+    //        await stepContext.context.sendActivity('Adios 👋🏻 ');
+    //       return await stepContext.endDialog();
+    //     }
+    //     else {
+    //       return await stepContext.next();
+    //   }
+
+
+    const intents = {
+        Welcome: { confidenceScore: 0.99, message: '¿En qué te puedo ayudar? ' },
+        GoodBye: { confidenceScore: 0.99, message: 'Adios 👋🏻 ' },
+      };
+      
+      const { topIntent, intents: [{ confidenceScore }] } = intent;
+      
+      if (!intents[topIntent] || confidenceScore < intents[topIntent].confidenceScore) {
+        return await stepContext.next();
       }
+      
+      await stepContext.context.sendActivity(intents[topIntent].message);
+      return await stepContext.endDialog();
+      
+
+
         
     }
     public async qnaSearch(stepContext,next) {
@@ -91,7 +119,38 @@ export class MainDialog extends ComponentDialog {
         let input = stepContext.context.activity.text
         const resQNA = await QnA(input)
         console.log(resQNA);
-        return  await stepContext.context.sendActivity(resQNA);
+
+        const card  =CardFactory.adaptiveCard({
+                "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+                "type": "AdaptiveCard",
+                "version": "1.0",
+                "body": [
+                    {
+                        "type": "TextBlock",
+                        "text": resQNA,
+                        "wrap": true
+                    }
+                ],
+                "actions": [
+                    {
+                        "type": "Action.Submit",
+                        "title": "👍🏻" ,
+                        "data": {
+                            "like": true
+                        }
+                    },
+                    {
+                        "type": "Action.Submit",
+                        "title": "👎🏻",
+                        "data": {
+                            "like": false
+                        }
+                    }
+                ]
+        })
+        const message = MessageFactory.attachment(card);
+
+      return await stepContext.context.sendActivity(message);
 
         
 
