@@ -13,6 +13,19 @@ import {
     WaterfallDialog,
     WaterfallStepContext
 } from 'botbuilder-dialogs';
+// Importar appInsights
+import appInsights = require('applicationinsights');
+
+
+
+// // Registra una excepción personalizada
+// appInsights.defaultClient.trackException({ exception: new Error('Mi error personalizado') });
+
+// // Registra un mensaje de seguimiento personalizado
+// appInsights.defaultClient.trackTrace({ message: 'Mi mensaje de seguimiento personalizado', severity: appInsights.Contracts.Severity.Information });
+
+// // Registra una métrica personalizada
+// appInsights.defaultClient.trackMetric({ name: 'miMetricaPersonalizada', value: 42 });
 
 const MAIN_WATERFALL_DIALOG = 'mainWaterfallDialog';
 
@@ -79,37 +92,29 @@ export class MainDialog extends ComponentDialog {
         console.log('MainDialog.intentRecognizer');
         let input = stepContext.context.activity.text
         const intent:any = await CLU(input)
-        console.log(intent);
+        // console.log(intent);
         if( intent.intents[intent.intents.length-1].confidenceScore >= 1){
             return await stepContext.next()
         }
-    //     if(intent.topIntent==='Welcome' && intent.intents[0].confidenceScore >= 0.99 ){
-    //        await stepContext.context.sendActivity('¿En qué te puedo ayudar? ');
-    //       return await stepContext.endDialog();
-    //     }
-    //     else if(intent.topIntent==='GoodBye' && intent.intents[0].confidenceScore >= 0.99 ){
-    //        await stepContext.context.sendActivity('Adios 👋🏻 ');
-    //       return await stepContext.endDialog();
-    //     }
-    //     else {
-    //       return await stepContext.next();
-    //   }
-
+        
+        
 
     const intents = {
         Welcome: { confidenceScore: 0.99, message: '¿En qué te puedo ayudar? ' },
         GoodBye: { confidenceScore: 0.99, message: 'Adios 👋🏻 ' },
-      };
-      
-      const { topIntent, intents: [{ confidenceScore }] } = intent;
-      
-      if (!intents[topIntent] || confidenceScore < intents[topIntent].confidenceScore) {
+    };
+    
+    const { topIntent, intents: [{ confidenceScore }] } = intent;
+    
+    if (!intents[topIntent] || confidenceScore < intents[topIntent].confidenceScore) {
         return await stepContext.next();
-      }
-      
-      await stepContext.context.sendActivity(intents[topIntent].message);
-      return await stepContext.endDialog();
-      
+    }
+    
+    // Registra un evento personalizado
+    appInsights.defaultClient.trackEvent({ name: 'CLU', properties: { intents: intent.topIntent } });
+    await stepContext.context.sendActivity(intents[topIntent].message);
+    return await stepContext.endDialog();
+    
 
 
         
@@ -118,6 +123,8 @@ export class MainDialog extends ComponentDialog {
         console.log('MainDialog.qnaSearch');
         let input = stepContext.context.activity.text
         const resQNA = await QnA(input)
+        // appInsights.defaultClient.trackEvent({ name: 'QnALogs', properties: { intents: intent } });
+
         console.log(resQNA);
 
         const card  =CardFactory.adaptiveCard({
