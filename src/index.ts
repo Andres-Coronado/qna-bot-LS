@@ -4,6 +4,7 @@
 import { config } from 'dotenv';
 import * as path from 'path';
 import * as restify from 'restify';
+import appInsights = require('applicationinsights');
 
 // Import required bot services.
 // See https://aka.ms/bot-services to learn more about the different parts of a bot.
@@ -29,6 +30,17 @@ const botFrameworkAuthentication = new ConfigurationBotFrameworkAuthentication(p
 // Create the adapter. See https://aka.ms/about-bot-adapter to learn more about using information from
 // the .bot file when configuring your adapter.
 const adapter = new CloudAdapter(botFrameworkAuthentication);
+const INSTRUMENTATION_KEY = process.env.InstrumentationKey;
+
+appInsights.setup(INSTRUMENTATION_KEY)
+    .setAutoDependencyCorrelation(true)
+    .setAutoCollectRequests(true)
+    .setAutoCollectPerformance(true)
+    .setAutoCollectExceptions(true)
+    .setAutoCollectDependencies(true)
+    .setAutoCollectConsole(true)
+    .setUseDiskRetryCaching(true)
+    .start();
 
 // Catch-all for errors.
 adapter.onTurnError = async (context, error) => {
